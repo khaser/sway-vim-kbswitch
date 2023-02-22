@@ -1,0 +1,9 @@
+[package]
+name = "lib-sway-vim-kbswitch"
+version = "0.0.1"
+
+[dependencies]
+swayipc = "3.0.1"
+
+[lib]
+crate-type = ["cdylib"]
