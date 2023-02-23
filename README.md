@@ -9,12 +9,17 @@ A Rust shared library that provides the interface for Vim keyboard layout switch
 
 ## Usage 
 - Install [vim-xkbswitch](https://github.com/lyokha/vim-xkbswitch).
-- Compile library with ``cargo build -r``
+- Compile this library using cargo.
+```
+git clone https://github.com/khaser/sway-vim-kbswitch && \
+cd sway-vim-kbswitch && cargo build -r
+```
+
 - Write the path to the library to the variable `g:XkbSwitchLib` in your .vimrc settings.
-  ```
-  let g:XkbSwitchEnabled = 1
-  let g:XkbSwitchLib = '<PathToBuildDir>/target/release/libswaykbswitch.so'
-  ```
+```
+let g:XkbSwitchEnabled = 1
+let g:XkbSwitchLib = '<PathToBuildDir>/target/release/libswaykbswitch.so'
+```
 ## Problems 
 When you run vim with sudo command you should preserve environment variable.
 ``SWAYSOCK``. 
