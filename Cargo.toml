@@ -1,5 +1,5 @@
 [package]
-name = "lib-sway-vim-kbswitch"
+name = "libswaykbswitch"
 version = "0.0.1"
 
 [dependencies]
