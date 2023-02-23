@@ -27,5 +27,8 @@ Example of run with sudo:
 ```
 sudo --preserve-env=SWAYSOCK vim
 ```
-You can put sudo alias into you .bashrc to fix this problem.
+You can put following line into you sudoers file to fix this problem.
+```
+Defaults  env_keep += "SWAYSOCK"
+```
 
