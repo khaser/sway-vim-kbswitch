@@ -12,4 +12,5 @@ readme = "README.md"
 swayipc = "3.0.1"
 
 [lib]
+name = "swaykbswitch"
 crate-type = ["cdylib"]
