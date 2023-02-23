@@ -1,6 +1,12 @@
 [package]
 name = "libswaykbswitch"
+authors = ["Andrey Khorokhorin <a-horohorin@mail.ru>"]
 version = "0.0.1"
+description = "A library for controlling sway through its IPC interface"
+license = "MIT"
+repository = "https://github.com/khaser/sway-vim-kbswitch"
+keywords = ["sway", "swaywm", "vim"]
+readme = "README.md"
 
 [dependencies]
 swayipc = "3.0.1"
