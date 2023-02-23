@@ -24,16 +24,20 @@ fn switch_layout(conn: &mut Connection, layout: &String) {
 
 #[no_mangle]
 pub extern "C" fn Xkb_Switch_getXkbLayout() -> *const c_char {
-    let mut conn = Connection::new().unwrap();
-    return CString::new(get_cur_layout(&mut conn)).unwrap().into_raw() as *const c_char;
+    match Connection::new() {
+        Ok(mut conn) => CString::new(get_cur_layout(&mut conn)).unwrap().into_raw() as *const c_char,
+        Err(_) => 0 as *const c_char
+    }
 }
 
 #[no_mangle]
 pub extern "C" fn Xkb_Switch_setXkbLayout(layout_ptr: *const c_char) {
-    let mut conn = Connection::new().unwrap();
-    unsafe {
-        let layout = CStr::from_ptr(layout_ptr).to_string_lossy().to_string();
-        switch_layout(&mut conn, &layout);
+    match Connection::new() {
+        Ok(mut conn) => unsafe {
+            let layout = CStr::from_ptr(layout_ptr).to_string_lossy().to_string();
+            switch_layout(&mut conn, &layout);
+        },
+        Err(_) => ()
     };
 }
 
