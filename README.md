@@ -20,7 +20,15 @@ cd sway-vim-kbswitch && cargo build -r
 let g:XkbSwitchEnabled = 1
 let g:XkbSwitchLib = '<PathToBuildDir>/target/release/libswaykbswitch.so'
 ```
-## Problems 
+
+#### Optional(f and r action)
+For using f and r action with last layout for insert mode you can put following lines into your vimrc
+```
+let g:XkbSwitchAssistNKeymap = 1    
+set keymap=russian-jcukenwin
+let g:XkbSwitchKeymapNames = {'Russian' : 'ru'}
+```
+## Troubleshooting 
 When you run vim with sudo command you should preserve environment variable.
 ``SWAYSOCK``. 
 Example of run with sudo:
