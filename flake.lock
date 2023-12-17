@@ -18,42 +18,7 @@
         "type": "github"
       }
     },
-    "khaser": {
-      "inputs": {
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1702770880,
-        "narHash": "sha256-o+4UI0kwNQo/hLwyX6ENI/0xCRsN5ys8jQh8e6qAa6k=",
-        "ref": "master",
-        "rev": "6e8168917d6f8766643d30a69ad85891bce40e77",
-        "revCount": 15,
-        "type": "git",
-        "url": "ssh://git@109.124.253.149/~git/nixos-config"
-      },
-      "original": {
-        "ref": "master",
-        "type": "git",
-        "url": "ssh://git@109.124.253.149/~git/nixos-config"
-      }
-    },
     "nixpkgs": {
-      "locked": {
-        "lastModified": 1701952659,
-        "narHash": "sha256-TJv2srXt6fYPUjxgLAL0cy4nuf1OZD4KuA1TrCiQqg0=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "b4372c4924d9182034066c823df76d6eaf1f4ec4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixos-23.11",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_2": {
       "locked": {
         "lastModified": 1702346276,
         "narHash": "sha256-eAQgwIWApFQ40ipeOjVSoK4TEHVd6nbSd9fApiHIw5A=",
@@ -72,8 +37,7 @@
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
-        "khaser": "khaser",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs"
       }
     },
     "systems": {
