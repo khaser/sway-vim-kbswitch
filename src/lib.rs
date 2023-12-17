@@ -1,69 +1,67 @@
 extern crate swayipc;
 
-use std::ffi::{CString, CStr};
+use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 use swayipc::{Connection, Input};
 
-fn get_keyboard(conn: &mut Connection) -> Input {
-    let all_inputs = conn.get_inputs().unwrap();
-    let keyboard_iter = all_inputs.iter().position(|input_device| input_device.input_type == "keyboard").unwrap();
-    return all_inputs[keyboard_iter].clone();
-}
-
-fn get_cur_layout(conn: &mut Connection) -> String {
-    return get_keyboard(conn).xkb_active_layout_name.unwrap();
-}
-
-fn switch_layout(conn: &mut Connection, layout: &String) {
-    let keyboard = get_keyboard(conn);
-    match keyboard.xkb_layout_names.iter().position(|x| x == layout) {
-        Some(layout_index) => conn.run_command(format!("input {} xkb_switch_layout {}", keyboard.identifier, layout_index)),
-        None => panic!("There is no required layout for keyboard")
-    };
+#[derive(Debug)]
+enum Error {
+    InconsistentLayouts,
+    NoKeyboards,
 }
 
 #[no_mangle]
 pub extern "C" fn Xkb_Switch_getXkbLayout() -> *const c_char {
     match Connection::new() {
-        Ok(mut conn) => CString::new(get_cur_layout(&mut conn)).unwrap().into_raw() as *const c_char,
-        Err(_) => 0 as *const c_char
+        Ok(mut conn) => CString::new(get_cur_layout(&mut conn).unwrap())
+            .unwrap()
+            .into_raw() as *const c_char,
+        Err(_) => 0 as *const c_char,
     }
+}
+
+fn get_cur_layout(conn: &mut Connection) -> Result<String, Error> {
+    let mut layouts: Vec<String> = get_keyboards(conn)
+        .drain(..)
+        .filter_map(|kb| kb.xkb_active_layout_name)
+        .collect();
+    layouts.dedup();
+    match layouts.leak() {
+        [] => Err(Error::NoKeyboards),
+        [layout] => Ok(layout.to_string()),
+        _ => Err(Error::InconsistentLayouts),
+    }
+}
+
+fn get_keyboards(conn: &mut Connection) -> Vec<Input> {
+    let mut all_inputs = conn.get_inputs().unwrap();
+    all_inputs.retain(|input_device| input_device.input_type == "keyboard");
+    all_inputs
 }
 
 #[no_mangle]
 pub extern "C" fn Xkb_Switch_setXkbLayout(layout_ptr: *const c_char) {
     match Connection::new() {
-        Ok(mut conn) => unsafe {
-            let layout = CStr::from_ptr(layout_ptr).to_string_lossy().to_string();
+        Ok(mut conn) => {
+            let layout = unsafe { CStr::from_ptr(layout_ptr).to_string_lossy().to_string() };
             switch_layout(&mut conn, &layout);
-        },
-        Err(_) => ()
+        }
+        Err(_) => (),
     };
 }
 
-// #[non_exhaustive]
-// #[derive(Clone, Debug, Deserialize, Serialize)]
-// pub struct Input {
-//     /// The identifier for the input device.
-//     pub identifier: String,
-//     /// The human readable name for the device.
-//     pub name: String,
-//     /// The vendor code for the input device.
-//     pub vendor: i32,
-//     /// The product code for the input device.
-//     pub product: i32,
-//     /// The device type.  Currently this can be keyboard, pointer, touch,
-//     /// tablet_tool, tablet_pad, or switch.
-//     #[serde(rename = "type")]
-//     pub input_type: String,
-//     /// (Only keyboards) The name of the active keyboard layout in use.
-//     pub xkb_active_layout_name: Option<String>,
-//     /// (Only keyboards) A list a layout names configured for the keyboard.
-//     #[serde(default)]
-//     pub xkb_layout_names: Vec<String>,
-//     /// (Only keyboards) The index of the active keyboard layout in use.
-//     pub xkb_active_layout_index: Option<i32>,
-//     /// (Only libinput devices) An object describing the current device
-//     /// settings. See below for more information.
-//     pub libinput: Option<Libinput>,
-// }
+fn switch_layout(conn: &mut Connection, layout: &String) {
+    get_keyboards(conn).iter().for_each(|kb| {
+        let layout_index = kb
+            .xkb_layout_names
+            .iter()
+            .position(|x| x == layout)
+            .unwrap();
+
+        conn.run_command(format!(
+            "input {} xkb_switch_layout {}",
+            kb.identifier, layout_index
+        ))
+        .unwrap();
+    });
+}
