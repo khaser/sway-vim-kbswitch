@@ -62,7 +62,7 @@ fn switch_layout(conn: &mut Connection, layout: &String) {
         conn.run_command(format!(
             "input {} xkb_switch_layout {}",
             kb.identifier, layout_index
-        ))
-        .unwrap();
+        ));
+        // .unwrap();
     });
 }
