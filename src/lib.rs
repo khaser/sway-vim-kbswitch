@@ -13,9 +13,10 @@ enum Error {
 #[no_mangle]
 pub extern "C" fn Xkb_Switch_getXkbLayout() -> *const c_char {
     match Connection::new() {
-        Ok(mut conn) => CString::new(get_cur_layout(&mut conn).unwrap())
-            .unwrap()
-            .into_raw() as *const c_char,
+        Ok(mut conn) => match get_cur_layout(&mut conn) {
+            Ok(layout) => CString::new(layout).unwrap().into_raw() as *const c_char,
+            Err(_) => 0 as *const c_char,
+        },
         Err(_) => 0 as *const c_char,
     }
 }
@@ -34,7 +35,7 @@ fn get_cur_layout(conn: &mut Connection) -> Result<String, Error> {
 }
 
 fn get_keyboards(conn: &mut Connection) -> Vec<Input> {
-    let mut all_inputs = conn.get_inputs().unwrap();
+    let mut all_inputs = conn.get_inputs().unwrap_or_default();
     all_inputs.retain(|input_device| input_device.input_type == "keyboard");
     all_inputs
 }
