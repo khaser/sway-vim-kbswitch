@@ -1,7 +1,9 @@
 extern crate swayipc;
 
 use std::ffi::{CStr, CString};
+use std::net::Shutdown;
 use std::os::raw::c_char;
+use std::os::unix::net::UnixStream;
 use swayipc::{Connection, Input};
 
 #[derive(Debug)]
@@ -13,10 +15,14 @@ enum Error {
 #[no_mangle]
 pub extern "C" fn Xkb_Switch_getXkbLayout() -> *const c_char {
     match Connection::new() {
-        Ok(mut conn) => match get_cur_layout(&mut conn) {
-            Ok(layout) => CString::new(layout).unwrap().into_raw() as *const c_char,
-            Err(_) => 0 as *const c_char,
-        },
+        Ok(mut conn) => {
+            let res = match get_cur_layout(&mut conn) {
+                Ok(layout) => CString::new(layout).unwrap().into_raw() as *const c_char,
+                Err(_) => 0 as *const c_char,
+            };
+            let _ = UnixStream::from(conn).shutdown(Shutdown::Both);
+            res
+        }
         Err(_) => 0 as *const c_char,
     }
 }
@@ -46,6 +52,7 @@ pub extern "C" fn Xkb_Switch_setXkbLayout(layout_ptr: *const c_char) {
         Ok(mut conn) => {
             let layout = unsafe { CStr::from_ptr(layout_ptr).to_string_lossy().to_string() };
             switch_layout(&mut conn, &layout);
+            let _ = UnixStream::from(conn).shutdown(Shutdown::Both);
         }
         Err(_) => (),
     };
@@ -59,7 +66,7 @@ fn switch_layout(conn: &mut Connection, layout: &String) {
             .position(|x| x == layout)
             .unwrap();
 
-        conn.run_command(format!(
+        let _ = conn.run_command(format!(
             "input {} xkb_switch_layout {}",
             kb.identifier, layout_index
         ));
