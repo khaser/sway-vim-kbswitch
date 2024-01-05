@@ -14,17 +14,10 @@ enum Error {
 
 #[no_mangle]
 pub extern "C" fn Xkb_Switch_getXkbLayout() -> *const c_char {
-    match Connection::new() {
-        Ok(mut conn) => {
-            let res = match get_cur_layout(&mut conn) {
-                Ok(layout) => CString::new(layout).unwrap().into_raw() as *const c_char,
-                Err(_) => 0 as *const c_char,
-            };
-            let _ = UnixStream::from(conn).shutdown(Shutdown::Both);
-            res
-        }
-        Err(_) => 0 as *const c_char,
-    }
+    let mut conn = Connection::new().unwrap();
+    let layout = get_cur_layout(&mut conn).unwrap();
+    let _ = UnixStream::from(conn).shutdown(Shutdown::Both);
+    CString::new(layout).unwrap().into_raw()
 }
 
 fn get_cur_layout(conn: &mut Connection) -> Result<String, Error> {
