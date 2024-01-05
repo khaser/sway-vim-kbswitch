@@ -16,7 +16,7 @@ enum Error {
 pub extern "C" fn Xkb_Switch_getXkbLayout() -> *const c_char {
     let mut conn = Connection::new().unwrap();
     let layout = get_cur_layout(&mut conn).unwrap();
-    let _ = UnixStream::from(conn).shutdown(Shutdown::Both);
+    // let _ = UnixStream::from(conn).shutdown(Shutdown::Both);
     CString::new(layout).unwrap().into_raw()
 }
 
@@ -45,7 +45,7 @@ pub extern "C" fn Xkb_Switch_setXkbLayout(layout_ptr: *const c_char) {
         Ok(mut conn) => {
             let layout = unsafe { CStr::from_ptr(layout_ptr).to_string_lossy().to_string() };
             switch_layout(&mut conn, &layout);
-            let _ = UnixStream::from(conn).shutdown(Shutdown::Both);
+            // let _ = UnixStream::from(conn).shutdown(Shutdown::Both);
         }
         Err(_) => (),
     };
