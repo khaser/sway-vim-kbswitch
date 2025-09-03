@@ -7,9 +7,9 @@
 
 A Rust shared library that provides the interface for Vim keyboard layout switch [plugin](https://github.com/lyokha/vim-xkbswitch).
 
-## Usage 
-- Install [vim-xkbswitch](https://github.com/lyokha/vim-xkbswitch).
-- Compile this library using cargo.
+## Usage
+- Install [vim-xkbswitch](https://github.com/lyokha/vim-xkbswitch) plugin in your vim
+- Compile this library using cargo
 ```
 git clone https://github.com/khaser/sway-vim-kbswitch && \
 cd sway-vim-kbswitch && cargo build -r
@@ -21,21 +21,20 @@ let g:XkbSwitchEnabled = 1
 let g:XkbSwitchLib = '<PathToBuildDir>/target/release/libswaykbswitch.so'
 ```
 
-#### Optional(f and r action)
-For using f and r action with last layout for insert mode you can put following lines into your vimrc
+#### Optional (f and r action)
+For using f and r action with last layout for insert mode you can put following lines into your vimrc:
 ```
-let g:XkbSwitchAssistNKeymap = 1    
+let g:XkbSwitchAssistNKeymap = 1
 set keymap=russian-jcukenwin
 let g:XkbSwitchKeymapNames = {'Russian' : 'ru'}
 ```
-## Troubleshooting 
-When you run vim with sudo command you should preserve environment variable.
-``SWAYSOCK``. 
+## Troubleshooting
+When you run vim with sudo command you should preserve environment variable ``SWAYSOCK``.
 Example of run with sudo:
 ```
 sudo --preserve-env=SWAYSOCK vim
 ```
-You can put following line into you sudoers file to fix this problem.
+You can put following line into you sudoers file to fix this problem:
 ```
 Defaults  env_keep += "SWAYSOCK"
 ```
