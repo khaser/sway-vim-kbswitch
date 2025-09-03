@@ -1,9 +1,9 @@
 extern crate swayipc;
 
 use std::ffi::{CStr, CString};
-use std::net::Shutdown;
+
 use std::os::raw::c_char;
-use std::os::unix::net::UnixStream;
+
 use swayipc::{Connection, Input};
 
 #[derive(Debug)]
