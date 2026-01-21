@@ -1,7 +1,7 @@
 [package]
 name = "libswaykbswitch"
 authors = ["Andrey Khorokhorin <a-horohorin@mail.ru>"]
-version = "0.2.1"
+version = "0.2.2"
 description = "A shared library for Vim keyboard layout switching via sway IPC"
 license = "MIT"
 repository = "https://github.com/khaser/sway-vim-kbswitch"
